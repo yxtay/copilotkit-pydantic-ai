@@ -19,6 +19,7 @@ import { CopilotKitCSSProperties, CopilotSidebar } from "@copilotkit/react-ui";
 import { useEffect, useState } from "react";
 
 export default function CopilotKitPage() {
+  const agent = useAgent({ agentId: "my_agent" });
   const [themeColor, setThemeColor] = useState("#6366f1");
 
   // 🪁 Frontend Actions: https://docs.copilotkit.ai/pydantic-ai/frontend-actions
@@ -214,7 +215,7 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
 }
 
 function AgentInfo() {
-  const { agent } = useAgent();
+  const { agent } = useAgent({ agentId: "my_agent" });
 
   return (
     <div>
@@ -227,7 +228,7 @@ function AgentInfo() {
 }
 
 function MessageList() {
-  const { agent } = useAgent();
+  const { agent } = useAgent({ agentId: "my_agent" });
 
   return (
     <div>
@@ -242,7 +243,7 @@ function MessageList() {
 }
 
 function AgentStatus() {
-  const { agent } = useAgent();
+  const { agent } = useAgent({ agentId: "my_agent" });
 
   return (
     <div>
@@ -259,7 +260,7 @@ function AgentStatus() {
 }
 
 function StateDisplay() {
-  const { agent } = useAgent();
+  const { agent } = useAgent({ agentId: "my_agent" });
 
   return (
     <div>
@@ -276,7 +277,7 @@ function StateDisplay() {
 }
 
 function ThemeSelector() {
-  const { agent } = useAgent();
+  const { agent } = useAgent({ agentId: "my_agent" });
 
   const updateTheme = (theme: string) => {
     agent.setState({
@@ -295,7 +296,7 @@ function ThemeSelector() {
 }
 
 function EventLogger() {
-  const { agent } = useAgent();
+  const { agent } = useAgent({ agentId: "my_agent" });
 
   useEffect(() => {
     const subscriber: AgentSubscriber = {
@@ -318,4 +319,54 @@ function EventLogger() {
   }, []);
 
   return null;
+}
+
+function AgentDashboard() {
+  const { agent } = useAgent({ agentId: "my_agent" });
+  return (
+    <div className="p-8 max-w-4xl mx-auto space-y-6">
+      {/* Status */}
+      <div className="p-6 bg-white rounded-lg shadow">
+        <h2 className="text-xl font-bold mb-4">Agent Status</h2>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-3 h-3 rounded-full ${
+                agent.isRunning ? "bg-yellow-500 animate-pulse" : "bg-green-500"
+              }`}
+            />
+            <span>{agent.isRunning ? "Running" : "Idle"}</span>
+          </div>
+          <div>Thread: {agent.threadId}</div>
+          <div>Messages: {agent.messages.length}</div>
+        </div>
+      </div>
+      {/* State */}
+      <div className="p-6 bg-white rounded-lg shadow">
+        <h2 className="text-xl font-bold mb-4">Agent State</h2>
+        <pre className="bg-gray-50 p-4 rounded text-sm overflow-auto">
+          {JSON.stringify(agent.state, null, 2)}
+        </pre>
+      </div>
+      {/* Messages */}
+      <div className="p-6 bg-white rounded-lg shadow">
+        <h2 className="text-xl font-bold mb-4">Conversation</h2>
+        <div className="space-y-3">
+          {agent.messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`p-3 rounded-lg ${
+                msg.role === "user" ? "bg-blue-50 ml-8" : "bg-gray-50 mr-8"
+              }`}
+            >
+              <div className="font-semibold text-sm mb-1">
+                {msg.role === "user" ? "You" : "Agent"}
+              </div>
+              <div>{msg.content}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
