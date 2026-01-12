@@ -7,6 +7,8 @@ import { AgentState } from "@/lib/types";
 import type { AgentSubscriber } from "@ag-ui/client";
 import {
   useCoAgent,
+  useCoAgentStateRender,
+  useDefaultTool,
   useFrontendTool,
   useHumanInTheLoop,
   useRenderToolCall,
@@ -30,6 +32,32 @@ export default function CopilotKitPage() {
     ],
     handler({ themeColor }) {
       setThemeColor(themeColor);
+    },
+  });
+
+  useFrontendTool({
+    name: "sayHello",
+    description: "Say hello to the user",
+    parameters: [
+      {
+        name: "name",
+        type: "string",
+        description: "The name of the user to say hello to",
+        required: true,
+      },
+    ],
+    handler({ name }) {
+      // Handler returns the result of the tool call
+      return { currentURLPath: window.location.href, userName: name };
+    },
+    render: ({ args }) => {
+      // Renders UI based on the data of the tool call
+      return (
+        <div>
+          <h1>Hello, {args.name}!</h1>
+          <h1>You're currently on {window.location.href}</h1>
+        </div>
+      );
     },
   });
 
@@ -119,12 +147,49 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
     [themeColor]
   );
 
+  useCoAgentStateRender<AgentState>({
+    name: "my_agent", // MUST match the agent name in CopilotRuntime
+    render: ({ state }) => (
+      <div>
+        {state.searches?.map((search, index) => (
+          <div key={index}>
+            {search.done ? "✅" : "❌"} {search.query}
+            {search.done ? "" : "..."}
+          </div>
+        ))}
+      </div>
+    ),
+  });
+
+  useDefaultTool({
+    render: ({ name, args, status, result }) => {
+      return (
+        <div style={{ color: "black" }}>
+          <span>
+            {status === "complete" ? "✓" : "⏳"}
+            {name}
+          </span>
+          {status === "complete" && result && (
+            <pre>{JSON.stringify(result, null, 2)}</pre>
+          )}
+        </div>
+      );
+    },
+  });
+
   return (
     <div
       style={{ backgroundColor: themeColor }}
       className="h-screen flex justify-center items-center flex-col transition-colors duration-300"
     >
       <ProverbsCard state={state} setState={setState} />
+      <div className="flex flex-col gap-2 mt-4">
+        {state.searches?.map((search, index) => (
+          <div key={index} className="flex flex-row">
+            {search.done ? "✅" : "❌"} {search.query}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
