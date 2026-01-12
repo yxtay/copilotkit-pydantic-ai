@@ -1,5 +1,7 @@
 import asyncio
+from datetime import datetime
 from textwrap import dedent
+from zoneinfo import ZoneInfo
 
 from ag_ui.core import EventType, StateSnapshotEvent
 
@@ -29,6 +31,7 @@ class AgentState(BaseModel):
         description="The list of already written proverbs",
     )
     searches: list[Search] = Field(default_factory=list)
+    language: str = "english"
 
 # =====
 # Agent
@@ -83,6 +86,21 @@ def get_weather(_: RunContext[StateDeps[AgentState]], location: str) -> str:
   return f"The weather in {location} is sunny."
 
 
+@agent.tool_plain
+async def current_time(timezone: str = "UTC") -> str:
+    """Get the current time in ISO format.
+
+    Args:
+        timezone: The timezone to use.
+
+    Returns:
+        The current time in ISO format string.
+
+    """
+    tz: ZoneInfo = ZoneInfo(timezone)
+    return datetime.now(tz=tz).isoformat()
+
+
 @agent.tool
 async def add_search(
     ctx: RunContext[StateDeps[AgentState]], new_query: str
@@ -121,5 +139,25 @@ async def search_instructions(ctx: RunContext[StateDeps[AgentState]]) -> str:
         - ONLY USE THE `add_search` TOOL ONCE FOR A GIVEN QUERY
         Current searches:
         {ctx.deps.state.model_dump_json(indent=2)}
+        """
+    )
+
+@agent.instructions()
+async def language_instructions(ctx: RunContext[StateDeps[AgentState]]) -> str:
+    """Instructions for the language tracking agent.
+
+    Args:
+        ctx: The run context containing language state information.
+
+    Returns:
+        Instructions string for the language tracking agent.
+
+    """
+    return dedent(
+        f"""
+        You are a helpful assistant for tracking the language.
+        IMPORTANT:
+        - ALWAYS use the lower case for the language
+        - ALWAYS response in the current language: {ctx.deps.state.language}
         """
     )

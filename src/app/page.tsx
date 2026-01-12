@@ -8,6 +8,7 @@ import type { AgentSubscriber } from "@ag-ui/client";
 import {
   useCoAgent,
   useCoAgentStateRender,
+  useCopilotReadable,
   useDefaultTool,
   useFrontendTool,
   useHumanInTheLoop,
@@ -33,6 +34,11 @@ export default function CopilotKitPage() {
     handler({ themeColor }) {
       setThemeColor(themeColor);
     },
+  });
+
+  useCopilotReadable({
+    description: "Name of the user",
+    value: "Bob",
   });
 
   useFrontendTool({
@@ -111,12 +117,13 @@ export default function CopilotKitPage() {
 
 function YourMainContent({ themeColor }: { themeColor: string }) {
   // 🪁 Shared State: https://docs.copilotkit.ai/pydantic-ai/shared-state
-  const { state, setState } = useCoAgent<AgentState>({
+  const { state, setState, run } = useCoAgent<AgentState>({
     name: "my_agent",
     initialState: {
       proverbs: [
         "CopilotKit may be new, but its the best thing since sliced bread.",
       ],
+      language: "english",
     },
   });
 
@@ -177,6 +184,13 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
     },
   });
 
+  const toggleLanguage = () => {
+    setState({
+      ...state,
+      language: state.language === "english" ? "spanish" : "english",
+    });
+  };
+
   return (
     <div
       style={{ backgroundColor: themeColor }}
@@ -190,6 +204,11 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
           </div>
         ))}
       </div>
+      <div>
+        <p>Language: {state.language}</p>
+        <button onClick={toggleLanguage}>Toggle Language</button>
+      </div>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
     </div>
   );
 }

@@ -5,4 +5,5 @@ export type AgentState = {
     query: string;
     done: boolean;
   }[];
+  language: "english" | "spanish";
 };
