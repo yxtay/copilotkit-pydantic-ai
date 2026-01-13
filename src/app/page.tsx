@@ -326,7 +326,7 @@ function AgentDashboard() {
             />
             <span>{agent.isRunning ? "Running" : "Idle"}</span>
           </div>
-          <div>Thread: {agent.threadId}</div>
+          {/* <div>Thread: {agent.threadId}</div> */}
           <div>Messages: {agent.messages.length}</div>
         </div>
       </div>
