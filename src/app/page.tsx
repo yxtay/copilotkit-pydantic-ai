@@ -219,7 +219,7 @@ function AgentInfo() {
 
   return (
     <div>
-      <p>Agent ID: {agent.id}</p>
+      <p>Agent ID: {agent.agentId}</p>
       <p>Thread ID: {agent.threadId}</p>
       <p>Status: {agent.isRunning ? "Running" : "Idle"}</p>
       <p>Messages: {agent.messages.length}</p>
