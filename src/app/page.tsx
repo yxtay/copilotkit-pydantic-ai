@@ -345,13 +345,13 @@ function AgentDashboard() {
             <div
               key={msg.id}
               className={`p-3 rounded-lg ${
-                msg.role === "user" ? "bg-blue-50 ml-8" : "bg-gray-50 mr-8"
+                msg.role === "user" ? "ml-8" : "mr-8"
               }`}
             >
               <div className="font-semibold text-sm mb-1">
                 {msg.role === "user" ? "You" : "Agent"}
               </div>
-              <div>{JSON.stringify(msg.content)}</div>
+              <pre className="overflow-auto">{msg.content}</pre>
             </div>
           ))}
         </div>
