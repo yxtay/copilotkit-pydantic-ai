@@ -333,7 +333,7 @@ function AgentDashboard() {
       {/* State */}
       <div className="p-6 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Agent State</h2>
-        <pre className="bg-gray-50 p-4 rounded text-sm overflow-auto">
+        <pre className="p-4 rounded text-sm overflow-auto">
           {JSON.stringify(agent.state, null, 2)}
         </pre>
       </div>
@@ -345,7 +345,7 @@ function AgentDashboard() {
             <div
               key={msg.id}
               className={`p-3 rounded-lg ${
-                msg.role === "user" ? "bg-blue-50 ml-8" : "bg-gray-50 mr-8"
+                msg.role === "user" ? "ml-8" : "mr-8"
               }`}
             >
               <div className="font-semibold text-sm mb-1">
