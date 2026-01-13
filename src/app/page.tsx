@@ -235,7 +235,7 @@ function MessageList() {
       {agent.messages.map((msg) => (
         <div key={msg.id}>
           <strong>{msg.role}:</strong>
-          <span>{msg.content}</span>
+          <span>{JSON.stringify(msg.content)}</span>
         </div>
       ))}
     </div>
@@ -362,7 +362,7 @@ function AgentDashboard() {
               <div className="font-semibold text-sm mb-1">
                 {msg.role === "user" ? "You" : "Agent"}
               </div>
-              <div>{msg.content}</div>
+              <div>{JSON.stringify(msg.content)}</div>
             </div>
           ))}
         </div>
