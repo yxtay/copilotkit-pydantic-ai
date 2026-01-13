@@ -198,18 +198,7 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
       className="h-screen flex justify-center items-center flex-col transition-colors duration-300"
     >
       <ProverbsCard state={state} setState={setState} />
-      <div className="flex flex-col gap-2 mt-4">
-        {state.searches?.map((search, index) => (
-          <div key={index} className="flex flex-row">
-            {search.done ? "✅" : "❌"} {search.query}
-          </div>
-        ))}
-      </div>
-      <div>
-        <p>Language: {state.language}</p>
-        <button onClick={toggleLanguage}>Toggle Language</button>
-      </div>
-      <pre>{JSON.stringify(state, null, 2)}</pre>
+      <AgentDashboard />
     </div>
   );
 }
@@ -326,7 +315,7 @@ function AgentDashboard() {
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
       {/* Status */}
-      <div className="p-6 bg-white rounded-lg shadow">
+      <div className="p-6 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Agent Status</h2>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -342,14 +331,14 @@ function AgentDashboard() {
         </div>
       </div>
       {/* State */}
-      <div className="p-6 bg-white rounded-lg shadow">
+      <div className="p-6 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Agent State</h2>
-        <pre className="bg-gray-50 p-4 rounded text-sm overflow-auto">
+        <pre className="p-4 rounded text-sm overflow-auto">
           {JSON.stringify(agent.state, null, 2)}
         </pre>
       </div>
       {/* Messages */}
-      <div className="p-6 bg-white rounded-lg shadow">
+      <div className="p-6 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Conversation</h2>
         <div className="space-y-3">
           {agent.messages.map((msg) => (
