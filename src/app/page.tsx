@@ -37,37 +37,6 @@ export default function CopilotKitPage() {
     },
   });
 
-  useCopilotReadable({
-    description: "Name of the user",
-    value: "Bob",
-  });
-
-  useFrontendTool({
-    name: "sayHello",
-    description: "Say hello to the user",
-    parameters: [
-      {
-        name: "name",
-        type: "string",
-        description: "The name of the user to say hello to",
-        required: true,
-      },
-    ],
-    handler({ name }) {
-      // Handler returns the result of the tool call
-      return { currentURLPath: window.location.href, userName: name };
-    },
-    render: ({ args }) => {
-      // Renders UI based on the data of the tool call
-      return (
-        <div>
-          <h1>Hello, {args.name}!</h1>
-          <h1>You're currently on {window.location.href}</h1>
-        </div>
-      );
-    },
-  });
-
   return (
     <main
       style={
@@ -155,6 +124,37 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
     [themeColor]
   );
 
+  useCopilotReadable({
+    description: "Name of the user",
+    value: "Bob",
+  });
+
+  useFrontendTool({
+    name: "sayHello",
+    description: "Say hello to the user",
+    parameters: [
+      {
+        name: "name",
+        type: "string",
+        description: "The name of the user to say hello to",
+        required: true,
+      },
+    ],
+    handler({ name }) {
+      // Handler returns the result of the tool call
+      return { currentURLPath: window.location.href, userName: name };
+    },
+    render: ({ args }) => {
+      // Renders UI based on the data of the tool call
+      return (
+        <div>
+          <h1>Hello, {args.name}!</h1>
+          <h1>You're currently on {window.location.href}</h1>
+        </div>
+      );
+    },
+  });
+
   useCoAgentStateRender<AgentState>({
     name: "my_agent", // MUST match the agent name in CopilotRuntime
     render: ({ state }) => (
@@ -199,87 +199,7 @@ function YourMainContent({ themeColor }: { themeColor: string }) {
     >
       <ProverbsCard state={state} setState={setState} />
       <AgentDashboard />
-    </div>
-  );
-}
-
-function AgentInfo() {
-  const { agent } = useAgent({ agentId: "my_agent" });
-
-  return (
-    <div>
-      <p>Agent ID: {agent.agentId}</p>
-      <p>Thread ID: {agent.threadId}</p>
-      <p>Status: {agent.isRunning ? "Running" : "Idle"}</p>
-      <p>Messages: {agent.messages.length}</p>
-    </div>
-  );
-}
-
-function MessageList() {
-  const { agent } = useAgent({ agentId: "my_agent" });
-
-  return (
-    <div>
-      {agent.messages.map((msg) => (
-        <div key={msg.id}>
-          <strong>{msg.role}:</strong>
-          <span>{JSON.stringify(msg.content)}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AgentStatus() {
-  const { agent } = useAgent({ agentId: "my_agent" });
-
-  return (
-    <div>
-      {agent.isRunning ? (
-        <div>
-          <div className="spinner" />
-          <span>Agent is processing...</span>
-        </div>
-      ) : (
-        <span>Ready</span>
-      )}
-    </div>
-  );
-}
-
-function StateDisplay() {
-  const { agent } = useAgent({ agentId: "my_agent" });
-
-  return (
-    <div>
-      <h3>Agent State</h3>
-      <pre>{JSON.stringify(agent.state, null, 2)}</pre>
-
-      {/* Access specific properties */}
-      {agent.state.user_name && <p>User: {agent.state.user_name}</p>}
-      {agent.state.preferences && (
-        <p>Preferences: {JSON.stringify(agent.state.preferences)}</p>
-      )}
-    </div>
-  );
-}
-
-function ThemeSelector() {
-  const { agent } = useAgent({ agentId: "my_agent" });
-
-  const updateTheme = (theme: string) => {
-    agent.setState({
-      ...agent.state,
-      user_theme: theme,
-    });
-  };
-
-  return (
-    <div>
-      <button onClick={() => updateTheme("dark")}>Dark Mode</button>
-      <button onClick={() => updateTheme("light")}>Light Mode</button>
-      <p>Current: {agent.state.user_theme || "default"}</p>
+      <EventLogger />
     </div>
   );
 }
